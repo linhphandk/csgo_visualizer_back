@@ -2,7 +2,7 @@
 Module contains logic for extracting data
 based on game data from a face it server
 """
-from typing import Union
+from typing import Union, Optional
 from pathlib import Path
 from enum import Enum
 import re
@@ -64,7 +64,7 @@ def get_game_data(data_path: Path):
 
             result = get_game_object(match_entry)
 
-            if result:
+            if result and new_round is not None:
                 new_round.add_action(result)
 
             if re.match(MatchRegex.ROUND_END.value, match_entry):
@@ -75,10 +75,10 @@ def get_game_data(data_path: Path):
     return rounds_list
 
 
-GameObjectType = Union[None,PlayerAttack,PlayerKill]
+GameObjectType = Union[PlayerAttack,PlayerKill]
 
 
-def get_game_object(game_entry) -> GameObjectType:
+def get_game_object(game_entry) -> Optional[GameObjectType]:
     """
     gets the string defining the entity of a match
     and return the a specific class containing extracted
