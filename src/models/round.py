@@ -37,6 +37,15 @@ class PlayerAction(ABC):
             other.action_type == self.action_type
         )
 
+    def serialize(self):
+        """
+        function that return serialized
+        object
+        """
+        serialized = vars(self)
+        serialized["action_type"] = self.action_type.value
+
+        return vars(self)
 
 class PlayerAttack(PlayerAction):
     """
@@ -61,6 +70,10 @@ class PlayerAttack(PlayerAction):
             super().__eq__(other) and
             self.damage_state == other.damage_state
         )
+    def serialize(self):
+        serialized = { **super().serialize(),**vars(self)}
+        serialized["damage_state"] = vars(self.damage_state)
+        return serialized
 
 class DamageState:
     """
@@ -76,7 +89,7 @@ class DamageState:
         self.armor = armor
 
     def __str__(self):
-        return "suffered: -"+self.damage+" health, -"+self.armor
+        return "suffered: -"+str(self.damage)+" health, -"+str(self.armor)
 
     def __eq__(self,other):
         return (
@@ -86,6 +99,12 @@ class DamageState:
             self.health == other.health and
             self.armor == other.armor
         )
+
+    def serialize(self):
+        """
+        returns serialized object
+        """
+        return vars(self)
 
 class PlayerKill(PlayerAction):
     """
@@ -123,3 +142,11 @@ class Round:
 
     def __str__(self):
         return "Number of actions: "+len(self.actions)
+
+    def serialize(self):
+        """
+        returns serialized object
+        """
+        return {
+            "actions": [action.serialize() for action in self.actions]
+        }
