@@ -16,7 +16,6 @@ def seed_database():
     if col_name in client.list_collection_names():
         print("already seeded")
     else:
-        print(client.list_collection_names())
         data = get_game_data(Path('./src/assets/data.txt'))
         client.insert_many([d.serialize() for d in data["round_list"]], 'player_action')
         client.insert( data['teams'], 'teams')

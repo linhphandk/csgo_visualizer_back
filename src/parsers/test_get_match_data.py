@@ -4,7 +4,7 @@ Test file
 import re
 from pathlib import Path
 from unittest import TestCase
-from src.models.round import PlayerKill, PlayerAttack,DamageState
+from src.models.round import PlayerKill, PlayerAttack,DamageState, PlayerAssist
 
 from .get_match_data import get_game_object, MatchRegex, get_game_data
 
@@ -65,8 +65,23 @@ class TestRegex(TestCase):
         entry_value = '11/28/2021 - 20:41:49: "ZywOo<26><STEAM_1:1:76700232><CT>" [1186 -1862 -416] killed "s1mple<30><STEAM_1:1:36968273><TERRORIST>" [181 -2121 -370] with "usp_silencer" (headshot)'
         expected_result = PlayerKill(
             attacker="ZywOo",
+            victim="s1mple",
+            headshot=True
+        )
+        result = get_game_object(entry_value)
+        self.assertEqual(expected_result, result)
+
+    def test_get_assist_action(self):
+        """
+        Test parsing of the attack entry
+        """
+        # pylint: disable=line-too-long
+        entry_value = '11/28/2021 - 20:38:24: "Kyojin<34><STEAM_1:1:22851120><CT>" assisted killing "s1mple<30><STEAM_1:1:36968273><TERRORIST>"'
+        expected_result = PlayerAssist(
+            attacker="Kyojin",
             victim="s1mple"
         )
+
         result = get_game_object(entry_value)
         self.assertEqual(expected_result, result)
 

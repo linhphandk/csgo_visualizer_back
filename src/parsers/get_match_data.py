@@ -7,7 +7,13 @@ from pathlib import Path
 from enum import Enum
 import re
 
-from src.models.round import Round, PlayerKill, PlayerAttack, DamageState
+from src.models.round import (
+    Round,
+    PlayerKill,
+    PlayerAttack,
+    DamageState,
+    PlayerAssist,
+)
 PLAYER_TAG_REGEX = r"(.+)<\d+><.+>"
 PLAYER_TAG_WITH_TEAM_REGEX = r"\""+PLAYER_TAG_REGEX+"<(CT|TERRORIST|Unassigned|Spectator|)>\""
 POSITION_REGEX = r"\[-?\d+ -?\d+ -?\d+\]"
@@ -32,6 +38,7 @@ class MatchRegex(Enum):
                                      PLAYER_TAG_WITH_TEAM_REGEX+" "+POSITION_REGEX+r" with \"\w+\"( \(headshot\))?")
     PLAYER_ATTACK = get_extended_regex(PLAYER_TAG_WITH_TEAM_REGEX+" "+POSITION_REGEX+" attacked " + PLAYER_TAG_WITH_TEAM_REGEX+" "+POSITION_REGEX +
                                        r" with \"\w+\" \(damage \"(\d+)\"\) \(damage_armor \"(\d+)\"\) \(health \"(\d+)\"\) \(armor \"(\d+)\"\) \(hitgroup \"(\w+)\"\)")
+    PLAYER_ASSIST = get_extended_regex(PLAYER_TAG_WITH_TEAM_REGEX+" assisted killing " + PLAYER_TAG_WITH_TEAM_REGEX)
     GAME_OVER = get_extended_regex("Game Over: competitive .*")
     TEAM_SWITCH = get_extended_regex(r"\""+PLAYER_TAG_REGEX+r"\" switched from team \<(CT|TERRORIST|Unassigned|Spectator)\> to \<(CT|TERRORIST|Unassigned|Spectator)\>")
 
@@ -108,6 +115,14 @@ def get_game_object(game_entry) -> Optional[GameObjectType]:
     result = re.search(MatchRegex.PLAYER_KILL.value, game_entry)
     if result:
         return PlayerKill(
+            attacker=result.group(1),
+            victim=result.group(3),
+            headshot=bool(result.group(5)),
+        )
+
+    result = re.search(MatchRegex.PLAYER_ASSIST.value, game_entry)
+    if result:
+        return PlayerAssist(
             attacker=result.group(1),
             victim=result.group(3)
         )

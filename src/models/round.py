@@ -13,6 +13,7 @@ class PlayerActionTypes(Enum):
     """
     ATTACK = "ATTACK"
     KILL = "KILL"
+    ASSIST = "ASSIST"
 
 class PlayerAction(ABC):
     """
@@ -110,9 +111,10 @@ class PlayerKill(PlayerAction):
     """
     Represents the kill actions
     """
-
-    def __init__(self, attacker, victim):
+    headshot:bool
+    def __init__(self, attacker, victim, headshot=False):
         super().__init__(attacker, victim, PlayerActionTypes.KILL)
+        self.headshot = headshot
 
     def __str__(self):
         return str(super())
@@ -120,6 +122,21 @@ class PlayerKill(PlayerAction):
     def __eq__(self, other):
         return (
             isinstance(other, PlayerKill) and
+            super().__eq__(other) and
+            self.headshot == other.headshot
+        )
+
+class PlayerAssist(PlayerAction):
+    """
+    Represents the assist actions
+    """
+
+    def __init__(self, attacker, victim):
+        super().__init__(attacker, victim, PlayerActionTypes.ASSIST)
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, PlayerAssist) and
             super().__eq__(other)
         )
 
