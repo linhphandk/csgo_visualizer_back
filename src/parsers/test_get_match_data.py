@@ -21,7 +21,7 @@ class TestRegex(TestCase):
         """
         test_data_path = Path('./src/assets/data.txt')
         results = get_game_data(test_data_path)
-        self.assertEqual(len(results), 22)
+        self.assertEqual(len(results["round_list"]), 22)
 
     def test_game_start(self):
         """
