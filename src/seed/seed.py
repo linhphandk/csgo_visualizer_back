@@ -4,8 +4,8 @@ are used on startup
 """
 from pathlib import Path
 
-from services.mongo_service import get_client
-from parsers.get_match_data import get_game_data
+from src.services.mongo_service import get_client
+from src.parsers.get_match_data import get_game_data
 def seed_database():
     """
     function used for seeding data

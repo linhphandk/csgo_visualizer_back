@@ -29,6 +29,11 @@ class MongoService():
         """
         return self.client[self.database].list_collection_names()
 
+    def find_one(self, collection):
+        """
+        bridge method
+        """
+        return self.client[self.database][collection].find()
 
     def server_info(self):
         """

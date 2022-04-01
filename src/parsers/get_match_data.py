@@ -7,7 +7,7 @@ from pathlib import Path
 from enum import Enum
 import re
 
-from models.round import Round, PlayerKill, PlayerAttack, DamageState
+from src.models.round import Round, PlayerKill, PlayerAttack, DamageState
 
 PLAYER_TAG_REGEX = r"\"(\w+)<\d+><.+><(CT|TERRORIST)>\""
 POSITION_REGEX = r"\[-?\d+ -?\d+ -?\d+\]"

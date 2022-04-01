@@ -8,6 +8,9 @@ pylint = "*"
 mypy = "*"
 pymongo = "*"
 mongomock = "*"
+ariadne = "*"
+fastapi = "*"
+uvicorn = "*"
 
 [dev-packages]
 autopep8 = "*"

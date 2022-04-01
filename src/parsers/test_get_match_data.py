@@ -4,7 +4,7 @@ Test file
 import re
 from pathlib import Path
 from unittest import TestCase
-from models.round import PlayerKill, PlayerAttack,DamageState
+from src.models.round import PlayerKill, PlayerAttack,DamageState
 
 from .get_match_data import get_game_object, MatchRegex, get_game_data
 
