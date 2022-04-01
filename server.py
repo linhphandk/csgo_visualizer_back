@@ -11,7 +11,20 @@ from bson.json_util import dumps
 from fastapi.responses import JSONResponse
 from bson.json_util import dumps
 import json
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(on_startup=[seed_database])
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 def resolve_actions():
     client = get_client()
