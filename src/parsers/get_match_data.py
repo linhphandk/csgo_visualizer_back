@@ -7,9 +7,9 @@ from pathlib import Path
 from enum import Enum
 import re
 
-from src.models.round import Round, PlayerKill, PlayerAttack, DamageState
-
-PLAYER_TAG_REGEX = r"\"(\w+)<\d+><.+><(CT|TERRORIST)>\""
+from models.round import Round, PlayerKill, PlayerAttack, DamageState
+PLAYER_TAG_REGEX = r"(.+)<\d+><.+>"
+PLAYER_TAG_WITH_TEAM_REGEX = r"\""+PLAYER_TAG_REGEX+"<(CT|TERRORIST|Unassigned|Spectator|)>\""
 POSITION_REGEX = r"\[-?\d+ -?\d+ -?\d+\]"
 
 
@@ -28,12 +28,12 @@ class MatchRegex(Enum):
     FACE_IT_LIVE = get_extended_regex(r" \[FACEIT\^] LIVE!")
     ROUND_START = get_extended_regex("World triggered \"Round_Start\"")
     ROUND_END = get_extended_regex("World triggered \"Round_End\"")
-    PLAYER_KILL = get_extended_regex(PLAYER_TAG_REGEX+" "+POSITION_REGEX+" killed " +
-                                     PLAYER_TAG_REGEX+" "+POSITION_REGEX+r" with \"\w+\"( \(headshot\))?")
-    PLAYER_ATTACK = get_extended_regex(PLAYER_TAG_REGEX+" "+POSITION_REGEX+" attacked " + PLAYER_TAG_REGEX+" "+POSITION_REGEX +
+    PLAYER_KILL = get_extended_regex(PLAYER_TAG_WITH_TEAM_REGEX+" "+POSITION_REGEX+" killed " +
+                                     PLAYER_TAG_WITH_TEAM_REGEX+" "+POSITION_REGEX+r" with \"\w+\"( \(headshot\))?")
+    PLAYER_ATTACK = get_extended_regex(PLAYER_TAG_WITH_TEAM_REGEX+" "+POSITION_REGEX+" attacked " + PLAYER_TAG_WITH_TEAM_REGEX+" "+POSITION_REGEX +
                                        r" with \"\w+\" \(damage \"(\d+)\"\) \(damage_armor \"(\d+)\"\) \(health \"(\d+)\"\) \(armor \"(\d+)\"\) \(hitgroup \"(\w+)\"\)")
     GAME_OVER = get_extended_regex("Game Over: competitive .*")
-
+    TEAM_SWITCH = get_extended_regex(r"\""+PLAYER_TAG_REGEX+r"\" switched from team \<(CT|TERRORIST|Unassigned|Spectator)\> to \<(CT|TERRORIST|Unassigned|Spectator)\>")
 
 def get_game_data(data_path: Path):
     """
@@ -43,8 +43,22 @@ def get_game_data(data_path: Path):
     match_start = False
     rounds_list = []
     new_round = None
+    teams = {
+        "CT":[],
+        "TERRORIST":[],
+        "Unassigned":[],
+        "Spectator":[]
+    }
     with open(data_path,'r', encoding='utf-8') as data:
         for match_entry in data:
+            if re.match(MatchRegex.TEAM_SWITCH.value, match_entry):
+                res = re.search(MatchRegex.TEAM_SWITCH.value, match_entry)
+                if res.group(3) not in ["Spectator", "Unassigned"]:
+                    teams[res.group(3)].append(res.group(1))
+
+                #remove if exist in other team
+                if res.group(1) in teams[res.group(2)]:
+                    teams[res.group(2)].remove(res.group(1))
 
 
             # The match should not begin before
@@ -72,8 +86,15 @@ def get_game_data(data_path: Path):
             if re.match(MatchRegex.GAME_OVER.value, match_entry):
                 break
 
-    return rounds_list
-
+    # switch the teams so at the moment
+    # the sides are based on the end of the game
+    return {
+        "round_list": rounds_list,
+        "teams": {
+            "CT": teams["TERRORIST"],
+            "TERRORIST": teams["CT"],
+        }
+    }
 
 GameObjectType = Union[PlayerAttack,PlayerKill]
 

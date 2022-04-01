@@ -18,4 +18,5 @@ def seed_database():
     else:
         print(client.list_collection_names())
         data = get_game_data(Path('./src/assets/data.txt'))
-        client.insert_many([d.serialize() for d in data], 'player_action')
+        client.insert_many([d.serialize() for d in data["round_list"]], 'player_action')
+        client.insert( data['teams'], 'teams')

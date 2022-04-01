@@ -23,6 +23,13 @@ class MongoService():
         """
         self.client[self.database][collection].insert_many(records)
 
+    def insert(self, records, collection):
+        """
+        bridge method
+        """
+        self.client[self.database][collection].insert(records)
+
+
     def list_collection_names(self):
         """
         bridge method
