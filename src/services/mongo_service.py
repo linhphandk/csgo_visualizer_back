@@ -27,7 +27,7 @@ class MongoService():
         """
         bridge method
         """
-        self.client[self.database][collection].insert(records)
+        self.client[self.database][collection].insert_one(records)
 
 
     def list_collection_names(self):
@@ -37,6 +37,12 @@ class MongoService():
         return self.client[self.database].list_collection_names()
 
     def find_one(self, collection):
+        """
+        bridge method
+        """
+        return self.client[self.database][collection].find_one()
+
+    def find(self, collection):
         """
         bridge method
         """

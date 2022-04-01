@@ -28,5 +28,10 @@ app.add_middleware(
 @app.get("/")
 def resolve_actions():
     client = get_client()
-    res = client.find_one("player_action")
-    return JSONResponse(content=json.loads(dumps(res)))
+    actions = client.find("player_action")
+    teams = client.find_one("teams")
+    data = {
+        "rounds": actions,
+        "teams": teams
+    }
+    return JSONResponse(content=json.loads(dumps(data)))

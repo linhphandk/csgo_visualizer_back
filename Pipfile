@@ -18,5 +18,6 @@ autopep8 = "*"
 python_version = "3.10"
 
 [scripts]
+start = "uvicorn server:app --reload --port 8001"
 lint = "pylint ./src"
 test = "python -m unittest discover ./src"
