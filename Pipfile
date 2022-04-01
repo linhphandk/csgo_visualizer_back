@@ -7,6 +7,7 @@ name = "pypi"
 pylint = "*"
 mypy = "*"
 pymongo = "*"
+mongomock = "*"
 
 [dev-packages]
 autopep8 = "*"

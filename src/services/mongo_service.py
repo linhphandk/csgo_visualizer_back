@@ -4,7 +4,6 @@ Module containing mongo client service
 from typing import Type
 
 from pymongo import MongoClient
-
 class MongoService():
     """
     Pymongo service
