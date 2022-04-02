@@ -87,7 +87,7 @@ def get_game_data(data_path: Path):
 
             if re.match(MatchRegex.ROUND_START.value, match_entry):
                 new_round = Round()
-            
+
             game_action = get_game_object(match_entry)
 
             if(

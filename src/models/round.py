@@ -203,7 +203,7 @@ class Team:
     name:str
     members: List[str]
     start_side: TeamSide
-    
+
 
     def __init__(self,start_side:TeamSide):
         self.start_side = start_side

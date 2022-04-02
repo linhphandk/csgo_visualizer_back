@@ -1,6 +1,7 @@
 """
 Module containing mongo client service
 """
+import os
 from typing import Type
 
 from pymongo import MongoClient
@@ -8,7 +9,7 @@ class MongoService():
     """
     Pymongo service
     """
-    host = "localhost"
+    host = "localhost" if not os.environ.get("MONGO_HOST") else os.environ.get("MONGO_HOST")
     port = 27017
     username = "root"
     password = "example"

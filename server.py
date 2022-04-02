@@ -1,9 +1,3 @@
-from ariadne import (
-    gql,
-    QueryType,
-    make_executable_schema,
-)
-from ariadne.asgi import GraphQL
 from fastapi import FastAPI
 from src.seed.seed import seed_database
 from src.services.mongo_service import get_client
