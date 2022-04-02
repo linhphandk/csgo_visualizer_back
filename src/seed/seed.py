@@ -4,8 +4,8 @@ are used on startup
 """
 from pathlib import Path
 
-from services.mongo_service import get_client
-from parsers.get_match_data import get_game_data
+from src.services.mongo_service import get_client
+from src.parsers.get_match_data import get_game_data
 def seed_database():
     """
     function used for seeding data
@@ -16,6 +16,6 @@ def seed_database():
     if col_name in client.list_collection_names():
         print("already seeded")
     else:
-        print(client.list_collection_names())
         data = get_game_data(Path('./src/assets/data.txt'))
-        client.insert_many([d.serialize() for d in data], 'player_action')
+        client.insert_many([d.serialize() for d in data["round_list"]], 'player_action')
+        client.insert_many(data['teams'], 'teams')

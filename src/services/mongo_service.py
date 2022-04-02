@@ -1,6 +1,7 @@
 """
 Module containing mongo client service
 """
+import os
 from typing import Type
 
 from pymongo import MongoClient
@@ -8,7 +9,7 @@ class MongoService():
     """
     Pymongo service
     """
-    host = "localhost"
+    host = "localhost" if not os.environ.get("MONGO_HOST") else os.environ.get("MONGO_HOST")
     port = 27017
     username = "root"
     password = "example"
@@ -23,12 +24,30 @@ class MongoService():
         """
         self.client[self.database][collection].insert_many(records)
 
+    def insert(self, records, collection):
+        """
+        bridge method
+        """
+        self.client[self.database][collection].insert_one(records)
+
+
     def list_collection_names(self):
         """
         bridge method
         """
         return self.client[self.database].list_collection_names()
 
+    def find_one(self, collection):
+        """
+        bridge method
+        """
+        return self.client[self.database][collection].find_one()
+
+    def find(self, collection):
+        """
+        bridge method
+        """
+        return self.client[self.database][collection].find()
 
     def server_info(self):
         """
