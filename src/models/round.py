@@ -5,7 +5,15 @@ in that particural round
 """
 from abc import ABC
 from enum import Enum
-
+from typing import List
+class TeamSide(Enum):
+    """
+    Names of teams people can join
+    """
+    CT = "CT"
+    TERRORIST = "TERRORIST"
+    UNASSIGNED = "Unassigned"
+    SPECTATOR = "Spectator"
 
 class PlayerActionTypes(Enum):
     """
@@ -23,7 +31,12 @@ class PlayerAction(ABC):
     attacker: str
     victim: str
 
-    def __init__(self, attacker, victim, action_type):
+    def __init__(
+        self,
+        attacker:str,
+        victim:str,
+        action_type:PlayerActionTypes
+    ):
         self.action_type = action_type
         self.attacker = attacker
         self.victim = victim
@@ -47,6 +60,7 @@ class PlayerAction(ABC):
         serialized["action_type"] = self.action_type.value
 
         return vars(self)
+
 
 class PlayerAttack(PlayerAction):
     """
@@ -149,6 +163,10 @@ class Round:
 
     def __init__(self):
         self.actions = []
+        self.result = {
+            "ct": 0,
+            "t": 0,
+        }
 
     def add_action(self, action: PlayerAction):
         """
@@ -165,5 +183,55 @@ class Round:
         returns serialized object
         """
         return {
+            "result": self.result,
             "actions": [action.serialize() for action in self.actions]
         }
+
+    def set_result(self, ct_score:int,t_score:int):
+        """
+        sets the score
+        """
+        self.result = {
+            "ct": ct_score,
+            "t": t_score
+        }
+
+class Team:
+    """
+    Class representing CTs or Terrorists
+    """
+    name:str
+    members: List[str]
+    start_side: TeamSide
+    
+
+    def __init__(self,start_side:TeamSide):
+        self.start_side = start_side
+        self.members = []
+        self.name = ""
+
+    def add_member(self,name:str):
+        """
+        Adds a team member
+        """
+        self.members.append(name)
+
+    def remove_member(self,name:str):
+        """
+        Removes a team member
+        """
+        self.members.remove(name)
+
+    def set_name(self,name):
+        """
+        sets the name of the Team
+        """
+        self.name = name
+
+    def serialize(self):
+        """
+        serializes the object to dict
+        """
+        result = vars(self)
+        result["start_side"] = result["start_side"].value
+        return result

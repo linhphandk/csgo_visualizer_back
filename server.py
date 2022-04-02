@@ -29,7 +29,7 @@ app.add_middleware(
 def resolve_actions():
     client = get_client()
     actions = client.find("player_action")
-    teams = client.find_one("teams")
+    teams = client.find("teams")
     data = {
         "rounds": actions,
         "teams": teams
